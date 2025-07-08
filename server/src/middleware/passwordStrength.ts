@@ -1,0 +1,16 @@
+import { Request, Response, NextFunction } from "express";
+import zxcvbn from "zxcvbn";
+
+export function passwordStrength(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { password } = req.body;
+  const strength = zxcvbn(password);
+  if (strength.score < 3) {
+    res.status(400).send({ message: "please choose a stronger password" });
+    return;
+  }
+  next();
+}
