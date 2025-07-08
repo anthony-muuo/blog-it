@@ -3,6 +3,6 @@ import { createUser } from "../controllers/blog-conrollers";
 
 const route = Router();
 
-route.post("/register", createUser);
+route.post("/auth/register", createUser);
 
 export default route;

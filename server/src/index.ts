@@ -2,6 +2,7 @@ import express from "express";
 import blog from "./routes/blog";
 
 const app = express();
+app.use(express.json());
 
 app.get("/", (_req, res) => {
   res.send("<h1>project endpoint test for blog it api</h1>");
