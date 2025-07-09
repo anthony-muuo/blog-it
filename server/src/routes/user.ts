@@ -9,8 +9,9 @@ import { passwordStrength } from "../middleware/passwordStrength";
 import { uniqueEmailAndUserName } from "../middleware/unique";
 import { verifyLogin } from "../middleware/verifyLogin";
 import { verfifyUser } from "../middleware/verifyUser";
+import { verifyBlogInputs } from "../middleware/verifyBlogInputs";
 
-import { createBlog } from "../controllers/blog-controllers";
+import { createBlog, getAllBlogs } from "../controllers/blog-controllers";
 const route = Router();
 
 route.post(
@@ -24,6 +25,7 @@ route.post(
 route.post("/auth/login", verifyLogin, loginUser);
 route.post("/auth/logout", logoutUser);
 
-route.post("/blogs", verfifyUser, createBlog);
+route.post("/blogs", verfifyUser, verifyBlogInputs, createBlog);
+route.get("/blogs", verfifyUser, getAllBlogs);
 
 export default route;
