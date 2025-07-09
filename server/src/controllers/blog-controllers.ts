@@ -24,7 +24,7 @@ export async function createBlog(req: Request, res: Response) {
   }
 }
 
-export async function getAllBlogs(req: Request, res: Response) {
+export async function getAllBlogsForSpecificUser(req: Request, res: Response) {
   try {
     const { id } = req.user;
     const blogs = await client.blog.findMany({
