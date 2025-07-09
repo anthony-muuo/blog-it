@@ -13,6 +13,7 @@ import { verifyBlogInputs } from "../middleware/verifyBlogInputs";
 
 import {
   createBlog,
+  getAllBlogs,
   getAllBlogsForSpecificUser,
 } from "../controllers/blog-controllers";
 const route = Router();
@@ -30,5 +31,6 @@ route.post("/auth/logout", logoutUser);
 
 route.post("/blogs", verfifyUser, verifyBlogInputs, createBlog);
 route.get("/user/blogs", verfifyUser, getAllBlogsForSpecificUser);
+route.get("/blogs", verfifyUser, getAllBlogs);
 
 export default route;

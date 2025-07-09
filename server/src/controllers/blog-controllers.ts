@@ -34,7 +34,18 @@ export async function getAllBlogsForSpecificUser(req: Request, res: Response) {
   } catch (error) {
     console.log(error);
     res.status(500).send({
-      message: "error fetching all blogs post",
+      message: "error fetching all your blogs",
     });
+  }
+}
+
+export async function getAllBlogs(req: Request, res: Response) {
+  try {
+    const blogs = await client.blog.findMany();
+    res
+      .status(200)
+      .send({ message: "successfully fetched all the blogs", blogs });
+  } catch (error) {
+    res.status(500).send({ message: "error fetching all blogs post" });
   }
 }
