@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createUser } from "../controllers/blog-conrollers";
+import { createUser, loginUser } from "../controllers/user-conrollers";
 import { verifyUser } from "../middleware/verifyUser";
 import { passwordStrength } from "../middleware/passwordStrength";
 import { uniqueEmailAndUserName } from "../middleware/unique";
@@ -13,5 +13,7 @@ route.post(
   uniqueEmailAndUserName,
   createUser
 );
+
+route.post("/auth/login", loginUser);
 
 export default route;
