@@ -4,15 +4,18 @@ import {
   loginUser,
   logoutUser,
 } from "../controllers/user-conrollers";
-import { verifyUser } from "../middleware/verifyUser";
+import { verifyInputs } from "../middleware/verifyInputs";
 import { passwordStrength } from "../middleware/passwordStrength";
 import { uniqueEmailAndUserName } from "../middleware/unique";
 import { verifyLogin } from "../middleware/verifyLogin";
+import { verfifyUser } from "../middleware/verifyUser";
+
+import { createBlog } from "../controllers/blog-controllers";
 const route = Router();
 
 route.post(
   "/auth/register",
-  verifyUser,
+  verifyInputs,
   passwordStrength,
   uniqueEmailAndUserName,
   createUser
@@ -20,5 +23,7 @@ route.post(
 
 route.post("/auth/login", verifyLogin, loginUser);
 route.post("/auth/logout", logoutUser);
+
+route.post("/blogs", verfifyUser, createBlog);
 
 export default route;

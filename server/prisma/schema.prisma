@@ -16,6 +16,23 @@ model User {
   password     String   @map("pass_word")
   dateJoined   DateTime @default(now()) @map("date_joined")
   isDeleted    Boolean  @default(false)
+  blogs        Blog[]
 
   @@map("users")
+}
+
+model Blog {
+  id            String   @id @default(uuid()) @map("blog_id")
+  title         String   @map("blog_title")
+  synopsis      String   @map("blog_synopsis")
+  content       String   @map("blog_content")
+  featuredImage String   @map("featured_image")
+  dateCreated   DateTime @default(now())
+  lastUpdated   DateTime @updatedAt
+  isDeleted     Boolean  @default(false)
+  userId        String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("blogs")
 }

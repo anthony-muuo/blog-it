@@ -1,25 +1,25 @@
-import { Request, Response, NextFunction } from "express";
-export function verifyUser(req: Request, res: Response, next: NextFunction) {
-  const { firstName, lastName, emailAddress, userName, password } = req.body;
-  if (!firstName) {
-    res.status(400).send({ message: "firstName is required" });
+import { NextFunction, Request, Response } from "express";
+import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
+import { UserPayLoad } from "../types";
+
+export function verfifyUser(req: Request, res: Response, next: NextFunction) {
+  const { authorization } = req.cookies;
+
+  if (!authorization) {
+    res.status(401).send({ message: "Unauthorized. Please Login" });
     return;
   }
-  if (!lastName) {
-    res.status(400).send({ message: "lastName is required" });
-    return;
-  }
-  if (!emailAddress) {
-    res.status(400).send({ message: "emailAddress is required" });
-    return;
-  }
-  if (!userName) {
-    res.status(400).send({ message: "userName is required" });
-    return;
-  }
-  if (!password) {
-    res.status(400).send({ message: "password is required" });
-    return;
-  }
-  next();
+
+  jwt.verify(
+    authorization,
+    process.env.JWT_SECRET!,
+    (err: VerifyErrors | null, decoded: JwtPayload | string | undefined) => {
+      if (err) {
+        res.status(401).send({ message: "Unauthorized. Please Login" });
+        return;
+      }
+      req.user = decoded as UserPayLoad;
+      next();
+    }
+  );
 }
