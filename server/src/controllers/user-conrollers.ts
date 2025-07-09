@@ -46,12 +46,25 @@ export const loginUser = async (req: Request, res: Response) => {
 
     const token = jwt.sign(remainingUserDetails, process.env.JWT_SECRET!);
 
-    res.cookie("authorization", token).json(remainingUserDetails);
-
-    res.status(200).send({
-      message: "you have succesfully logged in",
-    });
+    res
+      .cookie("authorization", token)
+      .json(remainingUserDetails)
+      .status(200)
+      .send({
+        message: "you have succesfully logged in",
+      });
   } catch (error) {
     res.status(400).send({ message: "failed to login" });
   }
 };
+
+export function logoutUser(_req: Request, res: Response) {
+  try {
+    res.clearCookie("authorization");
+    res.status(200).send({ message: "you have succesfully logout" });
+  } catch (error) {
+    res.status(400).send({
+      message: "failed to logout",
+    });
+  }
+}
