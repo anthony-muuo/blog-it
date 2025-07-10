@@ -73,7 +73,7 @@ export async function updateUserInfo(req: Request, res: Response) {
   try {
     const userId = req.user.id;
     const { firstName, lastName, userName, emailAddress } = req.body;
-    const updated = await client.user.update({
+    await client.user.update({
       where: { id: userId },
       data: {
         firstName: firstName && firstName,
@@ -82,9 +82,7 @@ export async function updateUserInfo(req: Request, res: Response) {
         userName: userName && userName,
       },
     });
-    res
-      .status(200)
-      .send({ message: "successfully updated your information", updated });
+    res.status(200).send({ message: "successfully updated your information" });
   } catch (error) {
     res.status(500).send({
       message: "error updating your information",
@@ -94,14 +92,40 @@ export async function updateUserInfo(req: Request, res: Response) {
 
 export async function getAllUser(req: Request, res: Response) {
   try {
-    const allUsers = await client.user.findMany();
-    res
-      .status(200)
-      .send({ message: "successfully fetched all users", allUsers });
+    await client.user.findMany();
+    res.status(200).send({ message: "successfully fetched all users" });
   } catch (error) {
     res.status(500).send({ message: "error fetching all users" });
   }
 }
-// PATCH /api/user/password: update user's password.
 
-// GET /api/user/blogs: get all blogs belonging to a specific user.
+export async function updateUserPassword(req: Request, res: Response) {
+  try {
+    const userId = req.user.id;
+    const { oldPassword, newPassword } = req.body;
+
+    const user = await client.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      res.status(404).send({ message: "User not found" });
+      return;
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      res.status(400).send({ message: "Incorrect current password" });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await client.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    res.status(200).send({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Failed to update password" });
+  }
+}

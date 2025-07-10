@@ -5,6 +5,7 @@ import {
   loginUser,
   logoutUser,
   updateUserInfo,
+  updateUserPassword,
 } from "../controllers/user-conrollers";
 import { verifyInputs } from "../middleware/verifyInputs";
 import { passwordStrength } from "../middleware/passwordStrength";
@@ -35,6 +36,7 @@ route.post("/auth/login", verifyLogin, loginUser);
 route.post("/auth/logout", logoutUser);
 route.patch("/user", verfifyUser, updateUserInfo);
 route.get("/users", getAllUser);
+route.patch("/user/password", verfifyUser, updateUserPassword);
 
 route.post("/blogs", verfifyUser, verifyBlogInputs, createBlog);
 route.get("/user/blogs", verfifyUser, getAllBlogsForSpecificUser);
