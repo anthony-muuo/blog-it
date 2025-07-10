@@ -1,8 +1,10 @@
 import { Router } from "express";
 import {
   createUser,
+  getAllUser,
   loginUser,
   logoutUser,
+  updateUserInfo,
 } from "../controllers/user-conrollers";
 import { verifyInputs } from "../middleware/verifyInputs";
 import { passwordStrength } from "../middleware/passwordStrength";
@@ -31,6 +33,8 @@ route.post(
 
 route.post("/auth/login", verifyLogin, loginUser);
 route.post("/auth/logout", logoutUser);
+route.patch("/user", verfifyUser, updateUserInfo);
+route.get("/users", getAllUser);
 
 route.post("/blogs", verfifyUser, verifyBlogInputs, createBlog);
 route.get("/user/blogs", verfifyUser, getAllBlogsForSpecificUser);

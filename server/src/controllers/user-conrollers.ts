@@ -63,8 +63,45 @@ export function logoutUser(_req: Request, res: Response) {
     res.clearCookie("authorization");
     res.status(200).send({ message: "you have succesfully logout" });
   } catch (error) {
-    res.status(400).send({
+    res.status(500).send({
       message: "failed to logout",
     });
   }
 }
+
+export async function updateUserInfo(req: Request, res: Response) {
+  try {
+    const userId = req.user.id;
+    const { firstName, lastName, userName, emailAddress } = req.body;
+    const updated = await client.user.update({
+      where: { id: userId },
+      data: {
+        firstName: firstName && firstName,
+        lastName: lastName && lastName,
+        emailAddress: emailAddress && emailAddress,
+        userName: userName && userName,
+      },
+    });
+    res
+      .status(200)
+      .send({ message: "successfully updated your information", updated });
+  } catch (error) {
+    res.status(500).send({
+      message: "error updating your information",
+    });
+  }
+}
+
+export async function getAllUser(req: Request, res: Response) {
+  try {
+    const allUsers = await client.user.findMany();
+    res
+      .status(200)
+      .send({ message: "successfully fetched all users", allUsers });
+  } catch (error) {
+    res.status(500).send({ message: "error fetching all users" });
+  }
+}
+// PATCH /api/user/password: update user's password.
+
+// GET /api/user/blogs: get all blogs belonging to a specific user.
