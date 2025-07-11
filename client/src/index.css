@@ -167,6 +167,7 @@ html {
   display: flex;
   gap: 2rem;
   align-items: center;
+  font-size: 0.7rem;
 }
 .logout > button {
   background-color: #842323;
@@ -183,4 +184,14 @@ html {
   margin-bottom: 1rem;
   font-size: 1.6rem;
   text-align: center;
+}
+.welcome {
+  text-transform: capitalize;
+  background-color: #005fcc;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 50%;
+}
+span {
+  text-transform: uppercase;
 }

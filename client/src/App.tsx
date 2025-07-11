@@ -5,12 +5,10 @@ import Home from "./pages/Home";
 import Signin from "./pages/Signin";
 import Login from "./pages/Login";
 import CreateBlog from "./pages/CreateBlog";
-// import NavHeader from "./components/NavHeader";
 
 function App() {
   return (
     <>
-      {/* if user is not logged in show this header while NavHeader */}
       <Header />
       <div>
         <Routes>

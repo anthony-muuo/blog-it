@@ -2,6 +2,7 @@ import { BASE_URL } from "../constant";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import userUser from "../store/userStore";
 
 type LoginProps = {
   emailAddress: string;
@@ -12,6 +13,7 @@ const Login = () => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [formError, setError] = useState("");
+  const setUser = userUser((state) => state.setUser);
 
   const navigate = useNavigate();
 
@@ -26,7 +28,6 @@ const Login = () => {
       });
 
       const data = await response.json();
-      console.log("Raw response:", data);
 
       if (!response.ok) {
         throw new Error(data.message);
@@ -45,7 +46,8 @@ const Login = () => {
     onError: (error) => {
       setError(error.message);
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setUser(data);
       navigate("/blogs");
     },
   });
