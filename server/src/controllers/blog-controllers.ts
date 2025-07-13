@@ -66,25 +66,34 @@ export async function getSpecificBlog(req: Request, res: Response) {
 }
 
 export async function updateSpecificBlog(req: Request, res: Response) {
+  console.log("🔥 updateSpecificBlog called with id:", req.params.id); // Add this
+
   try {
     const { id } = req.params;
-    const { title, synopsis, content, featuredImage } = req.body;
+    const { title, synopsis, content } = req.body;
+
+    const existingBlog = await client.blog.findUnique({ where: { id } });
+    if (!existingBlog) {
+      res.status(404).send({ message: "Blog not found" });
+      return;
+    }
 
     const updatedBlog = await client.blog.update({
       where: { id },
       data: {
-        title: title && title,
-        synopsis: synopsis && synopsis,
-        content: content && content,
-        featuredImage: featuredImage && featuredImage,
+        title,
+        synopsis,
+        content,
       },
     });
 
-    res
-      .status(200)
-      .send({ message: "success updating specific blog", updatedBlog });
+    res.status(200).send({
+      message: "Success updating specific blog",
+      updatedBlog,
+    });
   } catch (error) {
-    res.status(500).send({ message: "error updating specific blog post" });
+    console.error("Error updating blog:", error);
+    res.status(500).send({ message: "Server error while updating blog post" });
   }
 }
 
@@ -100,6 +109,6 @@ export async function deleteSpecificBlog(req: Request, res: Response) {
     res.status(200).send({ message: "blog successfully deleted" });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "error updating specific blog post" });
+    res.status(500).send({ message: "error deleting specific blog post" });
   }
 }

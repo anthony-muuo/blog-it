@@ -36,7 +36,7 @@ const AllBlogs = () => {
   }, []);
 
   return (
-    <div>
+    <div className="blog-parent">
       {blogs.map((blog) => (
         <Blog
           key={blog.id}

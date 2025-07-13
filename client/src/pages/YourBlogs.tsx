@@ -3,7 +3,14 @@ import { type BlogTypeProps } from "./AllBlogs";
 import { BASE_URL } from "../constant";
 import { Link } from "react-router-dom";
 
-function Blog({ title, synopsis, featuredImage, content, id }: BlogTypeProps) {
+function Blog({
+  title,
+  synopsis,
+  featuredImage,
+  content,
+  id,
+  onDelete,
+}: BlogTypeProps & { onDelete: (id: string) => void }) {
   return (
     <div className="card">
       <div className="image-container">
@@ -22,8 +29,12 @@ function Blog({ title, synopsis, featuredImage, content, id }: BlogTypeProps) {
           </p>
         </div>
         <div className="stay-to-date">
-          <button className="update">update</button>
-          <button className="delete">delete</button>
+          <Link to={`/update/${id}`}>
+            <button className="update">update</button>
+          </Link>
+          <button className="delete" onClick={() => onDelete(id)}>
+            delete
+          </button>
         </div>
       </div>
     </div>
@@ -55,20 +66,46 @@ const YourBlogs = () => {
     individualBlog();
   }, []);
 
+  async function handleDelete(id: string) {
+    try {
+      const response = await fetch(`${BASE_URL}/blogs/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      setBlog((prev) => prev.filter((blog) => blog.id !== id));
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+    }
+  }
+
   return (
-    <div>
-      {blog.map((single: BlogTypeProps) => (
-        <div key={single.id}>
-          <Blog
-            content={single.content}
-            synopsis={single.synopsis}
-            featuredImage={single.featuredImage}
-            title={single.title}
-            id={single.id}
-          />
+    <>
+      {blog.length > 0 ? (
+        <div className="blog-parent">
+          {blog.map((single: BlogTypeProps) => (
+            <div key={single.id} className="blog-parent-parent">
+              <Blog
+                content={single.content}
+                synopsis={single.synopsis}
+                featuredImage={single.featuredImage}
+                title={single.title}
+                id={single.id}
+                onDelete={handleDelete}
+              />
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      ) : (
+        <p className="no">YOu have no created blogs</p>
+      )}
+    </>
   );
 };
 

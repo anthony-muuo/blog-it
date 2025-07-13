@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { BASE_URL } from "../constant";
 import { useNavigate } from "react-router-dom";
@@ -9,13 +9,35 @@ type updatePasswordProps = {
   newPassword: string;
 };
 
+type updateUserInfoProps = {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  emailAddress: string;
+};
+
 const Profile = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [formError, setError] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
+
   const logOut = userUser((state) => state.logOut);
+  const user = userUser((state) => state.user);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName);
+      setLastName(user.lastName);
+      setUserName(user.userName);
+      setEmailAddress(user.emailAddress);
+    }
+  }, [user]);
 
   async function updatePassword(password: updatePasswordProps) {
     try {
@@ -69,12 +91,79 @@ const Profile = () => {
     }
   }
 
+  async function updateUserInfo(details: updateUserInfoProps) {
+    const response = await fetch(`${BASE_URL}/user`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(details),
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message);
+    return data;
+  }
+
+  const { mutate: mutateUserInfo, isPending: isUpdatingInfo } = useMutation({
+    mutationKey: ["update-user-info"],
+    mutationFn: updateUserInfo,
+  });
+
+  function handleUserInfoSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const userInfo = { firstName, lastName, emailAddress, userName };
+    mutateUserInfo(userInfo);
+  }
+
   return (
     <div className="profile-container">
       <h1 className="profile-title">Account Management</h1>
 
+      <div className="info-form">
+        <h2 className="form-title">Update Personal Info</h2>
+        <form onSubmit={handleUserInfoSubmit}>
+          <div className="form-group">
+            <label>First Name</label>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>Last Name</label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>Username</label>
+            <input
+              type="text"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              value={emailAddress}
+              onChange={(e) => setEmailAddress(e.target.value)}
+            />
+          </div>
+          <button className="update-button" disabled={isUpdatingInfo}>
+            {isUpdatingInfo ? "Updating..." : "Update Info"}
+          </button>
+        </form>
+      </div>
+
       <div className="password-form">
-        <h2 className="form-title">Update Password</h2>
+        <h2 className="form-title">Change Password</h2>
         <form onSubmit={handleUpdatePassword}>
           <div className="form-group">
             <label htmlFor="current-password">Currrent Password</label>

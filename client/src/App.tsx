@@ -9,6 +9,7 @@ import CreateBlog from "./pages/CreateBlog";
 import YourBlogs from "./pages/YourBlogs";
 import BlogByUser from "./pages/BlogByUser";
 import Profile from "./pages/Profile";
+import UpdateBlog from "./pages/UpdateBlog";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/yourblogs" element={<YourBlogs />} />
           <Route path="/blogs/:id" element={<BlogByUser />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/update/:id" element={<UpdateBlog />} />
         </Routes>
       </div>
     </>
