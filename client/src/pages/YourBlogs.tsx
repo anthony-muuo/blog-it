@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { type BlogTypeProps } from "./AllBlogs";
 import { BASE_URL } from "../constant";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Blog({
   title,
@@ -80,6 +81,7 @@ const YourBlogs = () => {
       }
 
       setBlog((prev) => prev.filter((blog) => blog.id !== id));
+      toast.success("successfully deleted a blog");
     } catch (error) {
       console.error("Error deleting blog:", error);
     }

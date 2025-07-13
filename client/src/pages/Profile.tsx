@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { BASE_URL } from "../constant";
 import { useNavigate } from "react-router-dom";
 import userUser from "../store/userStore";
+import { toast } from "react-toastify";
 
 type updatePasswordProps = {
   oldPassword: string;
@@ -64,6 +65,9 @@ const Profile = () => {
   const { mutate, isPending } = useMutation({
     mutationKey: ["update-password"],
     mutationFn: updatePassword,
+    onSuccess: () => {
+      toast.success("successfully changed your password!");
+    },
   });
 
   function handleUpdatePassword(e: React.FormEvent<HTMLFormElement>) {
@@ -84,7 +88,7 @@ const Profile = () => {
 
       logOut(); //this sets user to null in store
       localStorage.removeItem("blogit-user");
-
+      toast.success("you have successfully logged out");
       navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
@@ -109,6 +113,9 @@ const Profile = () => {
   const { mutate: mutateUserInfo, isPending: isUpdatingInfo } = useMutation({
     mutationKey: ["update-user-info"],
     mutationFn: updateUserInfo,
+    onSuccess: () => {
+      toast.success("you successfully updated your profile");
+    },
   });
 
   function handleUserInfoSubmit(e: React.FormEvent<HTMLFormElement>) {

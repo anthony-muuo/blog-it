@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import userUser from "../store/userStore";
+import { toast } from "react-toastify";
 
 type LoginProps = {
   emailAddress: string;
@@ -50,6 +51,7 @@ const Login = () => {
     onSuccess: (data) => {
       setUser(data);
       navigate("/blogs");
+      toast.success("you have successfully logged in");
     },
   });
 

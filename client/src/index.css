@@ -359,9 +359,11 @@ input[type="password"]:focus {
 }
 .blog-parent {
   display: flex;
+  flex-wrap: wrap;
 }
 .blog-parent-parent {
   flex: 1;
+  flex-wrap: wrap;
 }
 .image-container > img {
   width: 100%;

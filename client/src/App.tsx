@@ -10,6 +10,7 @@ import YourBlogs from "./pages/YourBlogs";
 import BlogByUser from "./pages/BlogByUser";
 import Profile from "./pages/Profile";
 import UpdateBlog from "./pages/UpdateBlog";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -28,6 +29,18 @@ function App() {
           <Route path="/update/:id" element={<UpdateBlog />} />
         </Routes>
       </div>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </>
   );
 }

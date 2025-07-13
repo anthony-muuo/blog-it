@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BASE_URL } from "../constant";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 type BlogPostProps = {
   synopsis: string;
@@ -67,6 +68,7 @@ const CreateBlog = () => {
     mutationFn: postBlog,
     onSuccess: () => {
       navigate("/blogs");
+      toast.success("successfully created a blog");
     },
     onError: (error) => {
       setMessage(error.message || "Something went wrong");

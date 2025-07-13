@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { BASE_URL } from "../constant";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../api/axiosinstance";
+import { toast } from "react-toastify";
 
 interface updateDetailsProps {
   title: string;
@@ -53,11 +53,23 @@ const UpdateBlog = () => {
 
   const mutation = useMutation({
     mutationFn: async (newDetails: updateDetailsProps) => {
-      const response = await axiosInstance.put(`/api/blogs/${id}`, newDetails);
-      return response.data;
+      const response = await fetch(`${BASE_URL}/blogs/${id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newDetails),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+      return data;
     },
     onSuccess: () => {
-      navigate("/your-blogs");
+      toast.success("blog successfully updated!");
+      navigate("/yourblogs");
     },
     onError: (err) => {
       console.error(err);

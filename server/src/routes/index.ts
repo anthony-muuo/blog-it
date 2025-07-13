@@ -46,7 +46,7 @@ route.post("/blogs", verfifyUser, verifyBlogInputs, createBlog);
 route.get("/user/blogs", verfifyUser, getAllBlogsForSpecificUser);
 route.get("/blogs", verfifyUser, getAllBlogs);
 route.get("/blogs/:id", verfifyUser, getSpecificBlog);
-route.put("blogs/:id", verfifyUser, updateSpecificBlog);
+route.patch("/blogs/:id", verfifyUser, updateSpecificBlog);
 route.delete("/blogs/:id", verfifyUser, deleteSpecificBlog);
 
 route.post("/upload", uploadMiddleware, uploadImage);

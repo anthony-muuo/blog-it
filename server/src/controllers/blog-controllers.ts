@@ -66,8 +66,6 @@ export async function getSpecificBlog(req: Request, res: Response) {
 }
 
 export async function updateSpecificBlog(req: Request, res: Response) {
-  console.log("🔥 updateSpecificBlog called with id:", req.params.id); // Add this
-
   try {
     const { id } = req.params;
     const { title, synopsis, content } = req.body;
