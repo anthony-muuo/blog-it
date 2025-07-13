@@ -12,12 +12,33 @@ type BlogPostProps = {
 
 const CreateBlog = () => {
   const [synopsis, setSynopsis] = useState("");
+  // const [featuredImageFile, setFeaturedImageFile] = useState<File | null>(null);
   const [featuredImage, setFeaturedImage] = useState("");
+
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
+
+  // async function uploadImage(file: File) {
+  //   const formData = new FormData();
+  //   formData.append("image", file);
+
+  //   const response = await fetch(`${BASE_URL}/upload`, {
+  //     method: "POST",
+  //     credentials: "include",
+  //     body: formData,
+  //   });
+
+  //   const data = await response.json();
+
+  //   if (!response.ok) {
+  //     throw new Error(data.message || "Image upload failed");
+  //   }
+
+  //   return data.imageUrl;
+  // }
 
   async function postBlog(blogPost: BlogPostProps) {
     try {
@@ -47,11 +68,38 @@ const CreateBlog = () => {
     onSuccess: () => {
       navigate("/blogs");
     },
+    onError: (error) => {
+      setMessage(error.message || "Something went wrong");
+    },
   });
 
-  function handleCreateBlog(e: React.FormEvent<HTMLFormElement>) {
+  async function handleCreateBlog(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage("");
+
+    // try {
+    //   let imageUrl = "";
+
+    //   if (featuredImageFile) {
+    //     imageUrl = await uploadImage(featuredImageFile);
+    //   }
+
+    //   const blogPost: BlogPostProps = {
+    //     title,
+    //     synopsis,
+    //     content,
+    //     featuredImage: imageUrl,
+    //   };
+
+    //   mutate(blogPost);
+    // } catch (error) {
+    //   console.error("Error uploading image or posting blog:", error);
+    //   if (error instanceof Error) {
+    //     setMessage(error.message || "Failed to create blog");
+    //   } else {
+    //     setMessage("Failed to create blog");
+    //   }
+    // }
     const blogPost: BlogPostProps = { title, synopsis, content, featuredImage };
     mutate(blogPost);
   }
@@ -84,9 +132,15 @@ const CreateBlog = () => {
           required
         />
         <input
-          type="text"
+          type="type"
           name="featuredImage"
-          placeholder="Featured Image URL"
+          // accept="image/*"
+          // onChange={(e) => {
+          //   if (e.target.files && e.target.files[0]) {
+          //     setFeaturedImageFile(e.target.files[0]);
+          //   }
+          // }}
+          placeholder="Featured Image URL(ensure its working url as i fix to upload from file)"
           value={featuredImage}
           onChange={(e) => setFeaturedImage(e.target.value)}
         />

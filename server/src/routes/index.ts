@@ -22,6 +22,10 @@ import {
   getSpecificBlog,
   updateSpecificBlog,
 } from "../controllers/blog-controllers";
+import {
+  uploadImage,
+  uploadMiddleware,
+} from "../controllers/upload-controller";
 const route = Router();
 
 route.post(
@@ -44,5 +48,7 @@ route.get("/blogs", verfifyUser, getAllBlogs);
 route.get("/blogs/:id", verfifyUser, getSpecificBlog);
 route.patch("/blogs/:id", verfifyUser, updateSpecificBlog);
 route.delete("/blogs/:id", verfifyUser, deleteSpecificBlog);
+
+route.post("/upload", uploadMiddleware, uploadImage);
 
 export default route;

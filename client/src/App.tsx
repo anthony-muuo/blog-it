@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import Signin from "./pages/Signin";
 import Login from "./pages/Login";
 import AllBlogs from "./pages/AllBlogs";
-import CreateBlog from "./components/CreateBlog";
+import CreateBlog from "./pages/CreateBlog";
 import YourBlogs from "./pages/YourBlogs";
 import BlogByUser from "./pages/BlogByUser";
 import Profile from "./pages/Profile";
