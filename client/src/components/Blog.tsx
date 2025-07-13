@@ -15,14 +15,16 @@ const Blog = ({ title, synopsis, featuredImage, content, id }: BlogProps) => {
       </div>
 
       <div className="card-content">
-        <h2 className="blog-title">{title}</h2>
-        <p className="blog-synopsis">{synopsis}</p>
-        <p className="blog-content-preview">
-          {content.slice(0, 80)}...{" "}
-          <Link to={`/blogs/${id}`} className="read-more">
-            Read more
-          </Link>
-        </p>
+        <div className="card-explanation">
+          <h2 className="blog-title">{title}</h2>
+          <p className="blog-synopsis">{synopsis}</p>
+          <p className="blog-content-preview">
+            {content.slice(0, 20)}...{" "}
+            <Link to={`/blogs/${id}`} className="read-more">
+              Read more
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
