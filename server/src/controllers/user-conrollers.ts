@@ -47,12 +47,13 @@ export const loginUser = async (req: Request, res: Response) => {
     const token = jwt.sign(remainingUserDetails, process.env.JWT_SECRET!);
 
     res
-      .cookie("authorization", token)
-      .json(remainingUserDetails)
+      .cookie("authorization", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      })
       .status(200)
-      .send({
-        message: "you have succesfully logged in",
-      });
+      .json(remainingUserDetails);
   } catch (error) {
     res.status(400).send({ message: "failed to login" });
   }
@@ -103,6 +104,13 @@ export async function updateUserPassword(req: Request, res: Response) {
   try {
     const userId = req.user.id;
     const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      res
+        .status(400)
+        .send({ message: "Both current and new passwords are required." });
+      return;
+    }
 
     const user = await client.user.findUnique({ where: { id: userId } });
     if (!user) {

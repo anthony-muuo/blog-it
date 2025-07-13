@@ -53,11 +53,12 @@ export async function getAllBlogs(req: Request, res: Response) {
 export async function getSpecificBlog(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    await client.blog.findFirst({
+    const blog = await client.blog.findFirst({
       where: { id },
     });
     res.status(200).send({
       message: "successfully fetched this specific blog",
+      blog,
     });
   } catch (error) {
     res.status(500).send({ message: "error fetching specific blog post" });
