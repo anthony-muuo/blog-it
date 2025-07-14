@@ -525,3 +525,7 @@ input[type="password"]:focus {
   font-size: 4rem;
   font-weight: 600;
 }
+.dont {
+  font-size: 1.4rem;
+  padding: 1rem;
+}

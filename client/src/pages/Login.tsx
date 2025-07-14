@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import userUser from "../store/userStore";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 type LoginProps = {
   emailAddress: string;
@@ -93,6 +94,9 @@ const Login = () => {
           {isPending ? "Logging in..." : "Login"}
         </button>
       </form>
+      <p className="dont">
+        Don't have an account? <Link to="/signin">Create Account</Link>
+      </p>
     </div>
   );
 };
