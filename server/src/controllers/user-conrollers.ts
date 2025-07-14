@@ -49,8 +49,8 @@ export const loginUser = async (req: Request, res: Response) => {
     res
       .cookie("authorization", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: true, //false in locally
+        sameSite: "none", //lax in locally
       })
       .status(200)
       .json(remainingUserDetails);
