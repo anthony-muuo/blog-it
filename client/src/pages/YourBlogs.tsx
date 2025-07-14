@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
 import { type BlogTypeProps } from "./AllBlogs";
 import { BASE_URL } from "../constant";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
 function Blog({
   title,
@@ -42,50 +42,64 @@ function Blog({
   );
 }
 
-const YourBlogs = () => {
-  const [blog, setBlog] = useState<BlogTypeProps[]>([]);
+async function fetchUserBlogs() {
+  const response = await fetch(`${BASE_URL}/user/blogs`, {
+    method: "GET",
+    credentials: "include",
+  });
 
-  useEffect(() => {
-    async function individualBlog() {
-      try {
-        const response = await fetch(`${BASE_URL}/user/blogs`, {
-          method: "GET",
-          credentials: "include",
-        });
+  const data = await response.json();
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message);
-        }
-
-        setBlog(data.blogs);
-      } catch (error) {
-        console.error("error fetching blogs", error);
-      }
-    }
-    individualBlog();
-  }, []);
-
-  async function handleDelete(id: string) {
-    try {
-      const response = await fetch(`${BASE_URL}/blogs/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message);
-      }
-
-      setBlog((prev) => prev.filter((blog) => blog.id !== id));
-      toast.success("successfully deleted a blog");
-    } catch (error) {
-      console.error("Error deleting blog:", error);
-    }
+  if (!response.ok) {
+    throw new Error(data.message);
   }
+
+  return data.blogs;
+}
+
+async function deleteBlog(id: string) {
+  const response = await fetch(`${BASE_URL}/blogs/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+}
+
+const YourBlogs = () => {
+  const queryClient = useQueryClient();
+
+  const {
+    data: blog = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery<BlogTypeProps[], Error>({
+    queryKey: ["userBlogs"],
+    queryFn: fetchUserBlogs,
+  });
+
+  const mutation = useMutation({
+    mutationFn: deleteBlog,
+    onSuccess: () => {
+      toast.success("Successfully deleted blog");
+      queryClient.invalidateQueries({ queryKey: ["userBlogs"] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleDelete = (id: string) => {
+    mutation.mutate(id);
+  };
+
+  if (isLoading) return <p>Loading your blogs...</p>;
+  if (isError) return <p>Error: {error?.message}</p>;
 
   return (
     <>

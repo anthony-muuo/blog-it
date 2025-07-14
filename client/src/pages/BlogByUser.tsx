@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { BASE_URL } from "../constant";
 import userUser from "../store/userStore";
+import { useQuery } from "@tanstack/react-query";
 
 type BlogType = {
   title: string;
@@ -10,28 +10,41 @@ type BlogType = {
   lastUpdated: string;
 };
 
-const BlogByUser = () => {
-  const { id } = useParams();
-  const [blog, setBlog] = useState<BlogType | null>(null);
-  const user = userUser((state) => state.user);
+async function fetchBlogById(id: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/blogs/${id}`, {
+      credentials: "include",
+    });
+    const data = await res.json();
 
-  useEffect(() => {
-    async function fetchBlog() {
-      try {
-        const res = await fetch(`${BASE_URL}/blogs/${id}`, {
-          credentials: "include",
-        });
-        const data = await res.json();
-        if (res.ok) setBlog(data.blog);
-      } catch (err) {
-        console.error("Failed to fetch blog:", err);
-      }
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to fetch blog");
     }
 
-    fetchBlog();
-  }, [id]);
+    return data.blog;
+  } catch (err) {
+    console.error("Failed to fetch blog:", err);
+  }
+}
 
-  if (!blog) return <div className="loading">Loading blog...</div>;
+const BlogByUser = () => {
+  const { id } = useParams();
+  const user = userUser((state) => state.user);
+
+  const {
+    data: blog,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<BlogType, Error>({
+    queryKey: ["blog", id],
+    queryFn: () => fetchBlogById(id!),
+    enabled: !!id,
+  });
+
+  if (isLoading) return <div className="loading">Loading blog...</div>;
+  if (isError) return <div className="error">Error: {error.message}</div>;
+  if (!blog) return <div>No blog found</div>;
 
   function capitalize(name?: string): string {
     if (!name) return "";

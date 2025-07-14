@@ -10,6 +10,7 @@ import YourBlogs from "./pages/YourBlogs";
 import BlogByUser from "./pages/BlogByUser";
 import Profile from "./pages/Profile";
 import UpdateBlog from "./pages/UpdateBlog";
+import Protected from "./components/Protected";
 import { ToastContainer } from "react-toastify";
 
 function App() {
@@ -21,12 +22,54 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/blogs" element={<AllBlogs />} />
-          <Route path="/createblog" element={<CreateBlog />} />
-          <Route path="/yourblogs" element={<YourBlogs />} />
-          <Route path="/blogs/:id" element={<BlogByUser />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/update/:id" element={<UpdateBlog />} />
+          <Route
+            path="/blogs"
+            element={
+              <Protected>
+                <AllBlogs />
+              </Protected>
+            }
+          />
+          <Route
+            path="/createblog"
+            element={
+              <Protected>
+                <CreateBlog />
+              </Protected>
+            }
+          />
+          <Route
+            path="/yourblogs"
+            element={
+              <Protected>
+                <YourBlogs />
+              </Protected>
+            }
+          />
+          <Route
+            path="/blogs/:id"
+            element={
+              <Protected>
+                <BlogByUser />
+              </Protected>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <Protected>
+                <Profile />
+              </Protected>
+            }
+          />
+          <Route
+            path="/update/:id"
+            element={
+              <Protected>
+                <UpdateBlog />
+              </Protected>
+            }
+          />
         </Routes>
       </div>
       <ToastContainer
