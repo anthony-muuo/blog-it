@@ -13,33 +13,47 @@ type BlogPostProps = {
 
 const CreateBlog = () => {
   const [synopsis, setSynopsis] = useState("");
-  // const [featuredImageFile, setFeaturedImageFile] = useState<File | null>(null);
-  const [featuredImage, setFeaturedImage] = useState("");
-
+  const [img, setImage] = useState<File | null>(null);
+  const [imageUrlError, setImageError] = useState("");
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   const navigate = useNavigate();
 
-  // async function uploadImage(file: File) {
-  //   const formData = new FormData();
-  //   formData.append("image", file);
+  const uploadImage = async (): Promise<string | null> => {
+    if (!img) {
+      setImageError("Image is required");
+      return null;
+    }
 
-  //   const response = await fetch(`${BASE_URL}/upload`, {
-  //     method: "POST",
-  //     credentials: "include",
-  //     body: formData,
-  //   });
+    const formData = new FormData();
+    formData.append("file", img);
+    formData.append("upload_preset", "antooo");
 
-  //   const data = await response.json();
+    try {
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/dhetijarg/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-  //   if (!response.ok) {
-  //     throw new Error(data.message || "Image upload failed");
-  //   }
+      const data = await response.json();
 
-  //   return data.imageUrl;
-  // }
+      if (!response.ok) {
+        throw new Error(data.error?.message || "Cloudinary upload failed");
+      }
+
+      return data.secure_url;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      setImageError("Failed to upload image");
+      return null;
+    }
+  };
 
   async function postBlog(blogPost: BlogPostProps) {
     try {
@@ -68,9 +82,10 @@ const CreateBlog = () => {
     mutationFn: postBlog,
     onSuccess: () => {
       navigate("/blogs");
-      toast.success("successfully created a blog");
+      toast.success("Successfully created a blog");
     },
-    onError: (error) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
       setMessage(error.message || "Something went wrong");
     },
   });
@@ -78,31 +93,20 @@ const CreateBlog = () => {
   async function handleCreateBlog(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage("");
+    setImageError("");
 
-    // try {
-    //   let imageUrl = "";
+    setIsUploading(true);
+    const imageUrl = await uploadImage();
+    setIsUploading(false);
+    if (!imageUrl) return;
 
-    //   if (featuredImageFile) {
-    //     imageUrl = await uploadImage(featuredImageFile);
-    //   }
+    const blogPost: BlogPostProps = {
+      title,
+      synopsis,
+      content,
+      featuredImage: imageUrl,
+    };
 
-    //   const blogPost: BlogPostProps = {
-    //     title,
-    //     synopsis,
-    //     content,
-    //     featuredImage: imageUrl,
-    //   };
-
-    //   mutate(blogPost);
-    // } catch (error) {
-    //   console.error("Error uploading image or posting blog:", error);
-    //   if (error instanceof Error) {
-    //     setMessage(error.message || "Failed to create blog");
-    //   } else {
-    //     setMessage("Failed to create blog");
-    //   }
-    // }
-    const blogPost: BlogPostProps = { title, synopsis, content, featuredImage };
     mutate(blogPost);
   }
 
@@ -133,21 +137,25 @@ const CreateBlog = () => {
           onChange={(e) => setContent(e.target.value)}
           required
         />
+
         <input
-          type="type"
-          name="featuredImage"
-          // accept="image/*"
-          // onChange={(e) => {
-          //   if (e.target.files && e.target.files[0]) {
-          //     setFeaturedImageFile(e.target.files[0]);
-          //   }
-          // }}
-          placeholder="Featured Image URL(ensure its working url as i fix to upload from file)"
-          value={featuredImage}
-          onChange={(e) => setFeaturedImage(e.target.value)}
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              setImage(e.target.files[0]);
+            }
+          }}
+          required
         />
-        <button disabled={isPending}>
-          {isPending ? "Creating Blog..." : "Create Blog"}
+        {imageUrlError && <p className="error">{imageUrlError}</p>}
+
+        <button type="submit" disabled={isUploading || isPending}>
+          {isUploading
+            ? "Uploading Image..."
+            : isPending
+            ? "Creating Blog..."
+            : "Create Blog"}
         </button>
         {message && <p className="create-blog-message">{message}</p>}
       </form>
